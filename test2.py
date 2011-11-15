@@ -5,12 +5,12 @@ class Test(object):
     def __init__(self, a):
         self._a = a
 
-    def __to_node__(self):
-        (a_func, a_node) = astpickle.to_node(self._a)
+    def __to_node__(self, state):
+        (a_func, a_node) = state.to_node(self._a)
         return ([], a_func+[
             ast.Assign(targets=[ast.Name(id='rv', ctx=ast.Store())], 
                 value=ast.Call(
-                    func=astpickle.class_name(self),
+                    func=state.class_name(self),
                     args=[],
                     keywords=[ast.keyword('a', a_node)],
                     starargs=None,
@@ -51,7 +51,7 @@ def gen_test(depth):
     return Test2(gen_test(depth+1), gen_test(depth+1))
 
 #x = gen_test(0)
-x = Test({'a':2123, 'b':Test3(Test(1), True)})
+x = Test({'a':2123, 'b':Test3(Test({1,2,3}), True)})
 
 func = astpickle.generate_module(x)
 print "Generated code:"

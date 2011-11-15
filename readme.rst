@@ -4,12 +4,11 @@ ast-pickle
 Description
 ============
 
-Proof of concept serialization library that generates the Python code to construct objects.
+`ast-pickle` is a proof of concept serialization library that generates Python code to construct objects.
 
 Lately I've been interested in the "code is data" idiom. The idea of serialization is to create instructions that
 can be used to re-build the object graph at a later time. Normally, serialization makes use of an additional 
-layer written in the language itself, or specific optimized C code (as is the case for cPickle, some json implementations),
-which builds and interprets these instructions. `ast-pickle` takes a different approach and generates .pyc files that contain Python code to directly construct the object.
+layer written in the language itself, or specific optimized C code, which builds and interprets these instructions. `ast-pickle` takes a different approach and generates .pyc files that contain Python code to directly construct the object.
 
 One would expect this to be reasonably fast, at least compared to the other pure-Python solutions. However, I have not yet benchmarked it.
 
@@ -32,17 +31,20 @@ ast with `generate_module`, which can be converted to text Python code using the
 Warnings / Limitations
 =======================
 
-* Does not support cycles in the object graph (like pickle). These currently result in an infinite loop.
+* Does not support cycles in the object graph (unlike pickle). These currently result in an infinite loop.
 
-* Does not support all the Python types yet.
+* Does not support all the Python built-in types yet.
 
 * As this library literally generates and executes Python code, the same warnings apply as for pickle and marshal:
 do not use this over untrusted channels, or accept serialized objects in this format from untrusted sources.
 
-* Note: this is just a toy experiment, it is *not* well-tested enough for production code.
+* Like with pickle, the module which contains pickled objects must be available for import when unpickling.
+
+* Note: this is just a toy experiment, it is *not* well-tested enough for production code. It needs code to handle corner cases etc...
 
 Comparison to marshal
 =====================
+
 Marshal is the underlying format for Python modules. However, marshal can only serialize basic python data types, not complete objects. This library can do the same, but also supports serialization of arbitrary objects...
 
 TODO
